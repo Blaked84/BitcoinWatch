@@ -23,6 +23,10 @@
           {
             "label": "Bitflyer",
             "value": "bitflyer"
+          },
+          {
+            "label": "KrakenLTC",
+            "value": "krakenltc"
           }
         ]
       }

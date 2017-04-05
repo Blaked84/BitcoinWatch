@@ -1,6 +1,7 @@
 // bit flyer api
 var URL_BITFLYER = "https://api.bitflyer.jp/v1/ticker";
 var URL_COINBASE = "https://api.coinbase.com/v2/prices/spot?currency=USD";
+var URL_KRAKEN = "https://api.kraken.com/0/public/Ticker?pair=LTCEUR";
 
 // Require the keys' numeric values.
 var keys = require('message_keys');
@@ -31,6 +32,11 @@ request.onload = function() {
     if (currentService == "bitflyer") {
       dict[keys.ltp] = json.ltp.toString();
       dict[keys.status] = "BTC/JPY";
+    } else if (currentService == "krakenltc"){
+      var rawLtc = json.result.XLTCZEUR.c;
+      dict[keys.ltp] = (Math.round(parseFloat(rawLtc)*100)/100).toString();
+      console.log('#############################: ' + (Math.round(parseInt(rawLtc)*100)/100).toString());
+      dict[keys.status] = "LTC/EUR";
     } else {
       dict[keys.ltp] = json.data.amount;
       dict[keys.status] = "BTC/USD";
@@ -49,7 +55,20 @@ request.onload = function() {
 
 function getLatestPrice() {
   // Send the request
-  var url = currentService == "bitflyer" ? URL_BITFLYER : URL_COINBASE;
+  //var url = currentService == "bitflyer" ? URL_BITFLYER : URL_COINBASE;
+  var url;
+  
+  switch(currentService) {
+    case "bitflyer":
+      url = URL_BITFLYER;
+      break;
+    case "krakenltc":
+      url = URL_KRAKEN;
+      break;
+    default:
+      url = URL_COINBASE;
+  }
+  
   request.open("GET", url);
   request.send();
 }
